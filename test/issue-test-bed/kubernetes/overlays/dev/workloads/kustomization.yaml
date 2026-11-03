@@ -1,0 +1,11 @@
+# dev: the test apps, deployed inside the karpenter-docker workload cluster:
+#
+#   kustomize build . | kubectl --kubeconfig ../../../../kubeconfig/karpenter-docker.kubeconfig apply --server-side --field-manager=test-bed -f -
+#
+# `make workloads` applies this; `make workloads-down` applies it with every
+# app at zero replicas, so Karpenter removes their nodes.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - scale-up-test

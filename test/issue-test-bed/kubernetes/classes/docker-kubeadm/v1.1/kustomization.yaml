@@ -1,0 +1,14 @@
+# docker-kubeadm v1.1: v1.0 with every machine template rotated.
+#   docker-machine-v1.1, kubeadm-control-plane-v1.1, kubeadm-workers-v1.1
+#   differ from v1.0 only in their test-bed labels (infra, control-plane,
+#   bootstrap), so moving a Cluster from v1.0 replaces every Machine, control
+#   plane included, with the same node image: a pure template rotation.
+#   Reuses docker-cluster-v1.0.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - clusterclass.yaml
+  - docker-machine.yaml
+  - kubeadm-control-plane.yaml
+  - kubeadm-workers.yaml

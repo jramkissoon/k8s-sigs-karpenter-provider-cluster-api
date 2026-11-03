@@ -1,0 +1,41 @@
+# docker-kubeadm v1.2: CAPD machines with docker-machine-v1.2, shared kubeadm control plane and workers bootstrap v3.
+# Immutable once committed: Clusters reference this by name, so a change is a
+# new vN, never an edit. Variables, patches and worker metadata: ../common-patch.yaml
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: ClusterClass
+metadata:
+  name: docker-kubeadm-v1.2
+  namespace: cluster-classes
+  annotations:
+    test-bed/class-description: "docker-kubeadm v1.2: CAPD machines with docker-machine-v1.2, shared kubeadm control plane and workers bootstrap v3."
+spec:
+  infrastructure:
+    ref:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: DockerClusterTemplate
+      name: docker-cluster-v1.0
+  controlPlane:
+    ref:
+      apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+      kind: KubeadmControlPlaneTemplate
+      name: kubeadm-control-plane-v1.2
+    machineInfrastructure:
+      ref:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: DockerMachineTemplate
+        name: docker-machine-v1.2
+  workers:
+    machineDeployments:
+      # No MachineHealthCheck: it would remediate nodes Karpenter is managing.
+      - class: karpenter-workers
+        template:
+          bootstrap:
+            ref:
+              apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+              kind: KubeadmConfigTemplate
+              name: kubeadm-workers-v1.2
+          infrastructure:
+            ref:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+              kind: DockerMachineTemplate
+              name: docker-machine-v1.2

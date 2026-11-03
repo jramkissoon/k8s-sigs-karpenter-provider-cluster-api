@@ -1,0 +1,15 @@
+# Cluster API providers, declared for the Cluster API Operator.
+#
+# Applied THIRD, after the operator is Ready, because these kinds do not exist
+# until the operator's CRDs are established. Plain manifests, so
+# kubectl apply -k works here.
+#
+# The operator fetches each provider's release components and installs them
+# into the namespace of its object. These are the operator's default
+# namespaces, which differ from the ones clusterctl init would use.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespaces.yaml
+  - providers.yaml

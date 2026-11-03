@@ -1,0 +1,21 @@
+# Everything applied to the MANAGEMENT cluster: cert-manager, the Cluster API
+# Operator and the providers it installs (Cluster API and CAPD), and the
+# catalog of ClusterClasses (../../../classes) workload clusters are built from.
+#
+#   kustomize build --enable-helm . | kubectl apply --server-side --field-manager=test-bed -f -
+#
+# Needs --enable-helm (cert-manager and the operator are charts) and converges
+# over a few applies: the operator's webhook needs cert-manager serving, and
+# the providers and the ClusterClass need CRDs that only exist once the
+# operator has installed them. Deployed through
+# ../../../overlays/dev/clusters/management, with the workload cluster's
+# definition;
+# `make deploy` loops until it converges.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cert-manager
+  - capi-operator
+  - capi-providers
+  - ../../../classes

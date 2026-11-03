@@ -1,0 +1,20 @@
+# Docker machine v1.1, for control plane and workers. The node image comes from the class's nodeImages patch, by version. v1.0 with only its test-bed labels changed: a pure template rotation.
+# Immutable once committed: a ClusterClass version references this by name,
+# so a change is a new -vN file, never an edit to this one.
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: DockerMachineTemplate
+metadata:
+  name: docker-machine-v1.1
+  namespace: cluster-classes
+spec:
+  template:
+    metadata:
+      # Copied onto every DockerMachine cloned from this template.
+      labels:
+        test-bed/infra: v1.1
+      annotations:
+        test-bed/template-description: "Docker machine v1.1, for control plane and workers. The node image comes from the class's nodeImages patch, by version. v1.0 with only its test-bed labels changed: a pure template rotation."
+    spec:
+      # Docker Desktop can take longer than the 3m default when several
+      # nodes bootstrap at once during a surge.
+      bootstrapTimeout: 5m

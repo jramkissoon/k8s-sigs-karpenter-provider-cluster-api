@@ -1,0 +1,6 @@
+# Every ClusterClass and the templates they reference live here; Clusters in
+# their own namespaces point at them with spec.topology.classNamespace.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cluster-classes

@@ -1,0 +1,31 @@
+# The identity the karpenter-docker Karpenter instance (running IN the workload
+# cluster) uses against this management cluster. `make wl-mgmt-credentials`
+# mints a token for this ServiceAccount and ships it to the workload cluster
+# as a kubeconfig Secret. The role covers exactly what the provider touches:
+# MachineDeployment replicas, and Machine labels and annotations.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: karpenter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: karpenter-docker-karpenter-cluster-api
+rules:
+  - apiGroups: ["cluster.x-k8s.io"]
+    resources: ["machinedeployments", "machines"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: karpenter-docker-karpenter-cluster-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: karpenter-docker-karpenter-cluster-api
+subjects:
+  - kind: ServiceAccount
+    name: karpenter
+    namespace: karpenter-docker

@@ -1,0 +1,11 @@
+# scale-up-test at 3 replicas: one Karpenter node each. Change the count here,
+# or override it for a run with `make workloads SCALE_UP_REPLICAS=<n>`.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../base/workloads/scale-up-test
+
+replicas:
+  - name: scale-up
+    count: 3

@@ -1,0 +1,84 @@
+# System & OS
+.DS_Store
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Go Binaries, Libraries & Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.o
+*.a
+_obj/
+_test/
+cgo_*.go
+bin/
+
+
+# Go Test, Coverage & Profiling Artifacts
+*.test
+*.out
+*.prof
+*.pprof
+coverage.txt
+
+# Archives, Compressed Files & Disk Images
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.xz
+*.zip
+*.7z
+*.rar
+*.iso
+*.dmg
+*.img
+
+# Project-local scratch space & build output
+tmp/
+/tmp*/
+/tmp/
+dist/
+
+# Local Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Kubeconfigs
+kubeconfig/
+
+# SSH and Certs
+certs/
+ssh/
+
+# Helm charts
+charts/
+
+# Backups
+backups/*.tar.gz
+backups/*.enc
+backups/
+
+# Images
+images/
+
+# Pinned tool binaries and their caches (make tools)
+hack/tools/
+
+# Evidence written by the issue scripts; attach to the issue or PR, do not commit.
+issues/*/runs/

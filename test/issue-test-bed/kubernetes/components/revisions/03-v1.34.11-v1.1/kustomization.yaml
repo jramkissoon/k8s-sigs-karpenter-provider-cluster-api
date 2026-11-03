@@ -1,0 +1,23 @@
+# Step 3 of the upgrade path: v1.34.8 -> v1.34.11 (patch). Topology rolls the control plane, then the workers.
+# A component, so it is never built on its own: the dev overlay for the
+# management cluster (../../../overlays/dev/clusters/management) lists the one
+# it is at; `make deploy REVISION=03-v1.34.11-v1.1` points it here with yq and
+# applies it. Deployed after the step before it; `make upgrade` only allows the next step.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - patch: |-
+      apiVersion: cluster.x-k8s.io/v1beta1
+      kind: Cluster
+      metadata:
+        name: karpenter-docker
+        namespace: karpenter-docker
+        labels:
+          test-bed/revision: 03-v1.34.11-v1.1
+        annotations:
+          test-bed/revision-description: "v1.34.8 -> v1.34.11 (patch). Topology rolls the control plane, then the workers."
+      spec:
+        topology:
+          class: docker-kubeadm-v1.1
+          version: v1.34.11

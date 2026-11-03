@@ -1,0 +1,11 @@
+apiVersion: karpenter.cluster.x-k8s.io/v1alpha1
+kind: ClusterAPINodeClass
+metadata:
+  name: karpenter-docker-workers
+spec:
+  # Which MachineDeployments this cluster's Karpenter may scale. The provider
+  # adds the karpenter-member label requirement itself; the cluster-name
+  # match keeps one Karpenter from touching another cluster's pools.
+  scalableResourceSelector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: karpenter-docker

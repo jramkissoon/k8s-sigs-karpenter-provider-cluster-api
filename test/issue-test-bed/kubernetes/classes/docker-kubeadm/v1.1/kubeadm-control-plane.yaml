@@ -1,0 +1,28 @@
+# Shared kubeadm control plane v1.1, used by the docker-kubeadm classes. v1.0 with only its test-bed labels changed: a pure template rotation.
+# nodeRegistration is left empty: CAPD injects the CRI socket from the
+# kindest/node image.
+# Immutable once committed: a ClusterClass version references this by name,
+# so a change is a new -vN file, never an edit to this one.
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlaneTemplate
+metadata:
+  name: kubeadm-control-plane-v1.1
+  namespace: cluster-classes
+  annotations:
+    test-bed/template-description: "Shared kubeadm control plane v1.1, used by the docker-kubeadm classes. v1.0 with only its test-bed labels changed: a pure template rotation."
+spec:
+  template:
+    spec:
+      machineTemplate:
+        metadata:
+          # Copied onto every control plane Machine.
+          labels:
+            test-bed/control-plane: v1.1
+      kubeadmConfigSpec:
+        clusterConfiguration:
+          apiServer:
+            certSANs: [localhost, 127.0.0.1, 0.0.0.0, host.docker.internal]
+        initConfiguration:
+          nodeRegistration: {}
+        joinConfiguration:
+          nodeRegistration: {}

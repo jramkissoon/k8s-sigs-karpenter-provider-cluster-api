@@ -1,0 +1,16 @@
+# dev: everything for the MANAGEMENT cluster at one revision of the upgrade
+# path. The base is every management component plus the karpenter-docker
+# Cluster; the one component listed below sets the Cluster's ClusterClass and
+# Kubernetes version (../../../../components/revisions/<NN-...>).
+#
+# `make deploy REVISION=<NN-...>` rewrites that entry with yq, then applies:
+#
+#   kustomize build --enable-helm . | kubectl --kubeconfig ../../../../../kubeconfig/capi-karpenter-test.kubeconfig apply --server-side --field-manager=test-bed -f -
+#
+# so this file always names the revision that was last deployed from it.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../../../base/clusters
+components:
+  - ../../../../components/revisions/01-v1.34.8-v1.0

@@ -1,0 +1,12 @@
+# Calico CNI for a workload cluster. CAPD nodes stay NotReady without a CNI,
+# and Karpenter cannot register a node that never goes Ready.
+#
+# Pulled from the Calico release at a pinned version. Its default pod pool is
+# 192.168.0.0/16, which is what ../../cluster.yaml gives the Cluster.
+# Applied with the WORKLOAD cluster's kubeconfig, with --server-side: the
+# Calico CRDs are too large for client-side apply.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://raw.githubusercontent.com/projectcalico/calico/v3.31.5/manifests/calico.yaml

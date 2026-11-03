@@ -1,0 +1,12 @@
+# The catalog of ClusterClasses a workload cluster can be built from, every
+# version of each, with the templates they reference. All of it is always
+# applied to the management cluster: a Cluster on an older version keeps
+# working and can still roll, and templates are immutable, so re-applying is a
+# no-op. Which version a Cluster is at is a revision's choice
+# (../components/revisions), not the catalog's.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - docker-kubeadm

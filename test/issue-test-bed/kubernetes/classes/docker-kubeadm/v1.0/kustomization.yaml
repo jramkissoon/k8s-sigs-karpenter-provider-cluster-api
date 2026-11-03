@@ -1,0 +1,15 @@
+# docker-kubeadm v1.0, the first version.
+#   docker-cluster-v1.0          the CAPD load balancer, nothing else
+#   docker-machine-v1.0          a CAPD node; its image comes from nodeImages by version
+#   kubeadm-control-plane-v1.0   kubeadm control plane
+#   kubeadm-workers-v1.0         kubeadm worker bootstrap, with the Karpenter
+#                                unregistered taint and the test-bed/bootstrap node label
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - clusterclass.yaml
+  - docker-cluster.yaml
+  - docker-machine.yaml
+  - kubeadm-control-plane.yaml
+  - kubeadm-workers.yaml

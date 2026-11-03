@@ -1,0 +1,13 @@
+# Docker cluster v1.0: the CAPD load balancer, nothing else.
+# Immutable once committed: a ClusterClass version references this by name,
+# so a change is a new -vN file, never an edit to this one.
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: DockerClusterTemplate
+metadata:
+  name: docker-cluster-v1.0
+  namespace: cluster-classes
+  annotations:
+    test-bed/template-description: "Docker cluster v1.0: the CAPD load balancer, nothing else."
+spec:
+  template:
+    spec: {}

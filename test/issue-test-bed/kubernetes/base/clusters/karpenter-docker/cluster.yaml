@@ -1,0 +1,23 @@
+# Everything but the network comes from the class. The worker pool has no
+# replicas on purpose: the topology controller then never sets them, and
+# Karpenter is the only thing that scales the MachineDeployment.
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: karpenter-docker
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks: ["192.168.0.0/16"]   # Calico's default pool
+    services:
+      cidrBlocks: ["10.128.0.0/12"]
+  topology:
+    class: SET-BY-REVISION
+    classNamespace: cluster-classes
+    version: SET-BY-REVISION
+    controlPlane:
+      replicas: 1
+    workers:
+      machineDeployments:
+        - class: karpenter-workers
+          name: workers

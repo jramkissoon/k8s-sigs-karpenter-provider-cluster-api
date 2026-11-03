@@ -1,0 +1,18 @@
+# The karpenter-docker workload cluster, as applied to the MANAGEMENT cluster:
+# one control plane node and a worker pool only Karpenter scales, built from
+# the docker-kubeadm ClusterClass by the topology controller, plus the
+# identity Karpenter uses to reach back.
+#
+# Class and version are SET-BY-REVISION placeholders: never applied as it is.
+# A revision component (../../../components/revisions, one per step of the
+# upgrade path) sets them. What runs INSIDE the cluster is in addons/, deployed through
+# ../../../overlays/dev/clusters/karpenter-docker.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: karpenter-docker
+
+resources:
+  - namespace.yaml
+  - cluster.yaml
+  - karpenter-rbac.yaml

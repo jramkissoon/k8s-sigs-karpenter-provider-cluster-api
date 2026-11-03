@@ -1,0 +1,7 @@
+# Test apps for the karpenter-docker workload cluster, applied with the
+# workload kubeconfig. `make workloads` applies them and scales scale-up-test.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - scale-up-test

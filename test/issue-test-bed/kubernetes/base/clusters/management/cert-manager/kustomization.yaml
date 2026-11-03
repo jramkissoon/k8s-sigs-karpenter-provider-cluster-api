@@ -1,0 +1,34 @@
+# cert-manager: issues the TLS certificates every Cluster API webhook needs.
+#
+# Applied FIRST and on its own. Everything after this depends on its
+# validating webhook being up, so wait for the deployments in the
+# cert-manager namespace to be Available before applying the next baseline.
+#
+# Inflates the Helm chart, so build with:  kustomize build --enable-helm .
+# (kubectl apply -k cannot inflate charts.)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cert-manager
+
+resources:
+  - namespace.yaml
+
+# kustomize pulls the chart into ./charts (gitignored) on first build.
+helmCharts:
+  - name: cert-manager
+    repo: https://charts.jetstack.io
+    version: v1.21.2
+    releaseName: cert-manager
+    namespace: cert-manager
+    includeCRDs: true
+    # Drops the chart's post-install startupapicheck Job. Helm would delete
+    # it after it ran; kubectl would leave it behind. Readiness is checked
+    # by waiting on the deployments instead.
+    skipHooks: true
+    valuesInline:
+      # Off by default in the chart; nothing downstream works without them.
+      crds:
+        enabled: true
+        # Disposable test bed: remove the CRDs with everything else.
+        keep: false

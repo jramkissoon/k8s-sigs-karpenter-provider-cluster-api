@@ -1,0 +1,11 @@
+# Which Karpenter image the test bed runs. Make-owned: `make karpenter-release`
+# rewrites it with `kustomize edit set image`, which re-serialises this file,
+# so it stays in plain block YAML with no other content. The tag carries the
+# provider commit, so a new build changes the Deployment and rolls Karpenter;
+# a fixed tag would leave the old container running.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+images:
+- name: karpenter-clusterapi-controller
+  newName: karpenter-clusterapi-controller
+  newTag: dev

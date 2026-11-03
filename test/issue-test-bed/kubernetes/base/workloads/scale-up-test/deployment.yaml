@@ -1,0 +1,37 @@
+# Shaped to force node creation: it can only land on Karpenter nodes, and
+# every replica needs its own node. Zero replicas here; the replica count is
+# the overlay's (../../../overlays/dev/workloads/scale-up-test), deployed by
+# `make workloads`.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scale-up
+  labels:
+    app: scale-up
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: scale-up
+  template:
+    metadata:
+      labels:
+        app: scale-up
+    spec:
+      nodeSelector:
+        karpenter.sh/nodepool: default
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: scale-up
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: pause
+          image: registry.k8s.io/pause:3.10   # multi-arch, tiny, never exits
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi

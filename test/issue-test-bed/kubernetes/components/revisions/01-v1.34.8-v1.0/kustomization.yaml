@@ -1,0 +1,23 @@
+# Step 1 of the upgrade path: v1.34.8 on class docker-kubeadm-v1.0.
+# A component, so it is never built on its own: the dev overlay for the
+# management cluster (../../../overlays/dev/clusters/management) lists the one
+# it is at; `make deploy REVISION=01-v1.34.8-v1.0` points it here with yq and
+# applies it. The first step: a new cluster is created here.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - patch: |-
+      apiVersion: cluster.x-k8s.io/v1beta1
+      kind: Cluster
+      metadata:
+        name: karpenter-docker
+        namespace: karpenter-docker
+        labels:
+          test-bed/revision: 01-v1.34.8-v1.0
+        annotations:
+          test-bed/revision-description: "v1.34.8 on class docker-kubeadm-v1.0."
+      spec:
+        topology:
+          class: docker-kubeadm-v1.0
+          version: v1.34.8

@@ -1,0 +1,66 @@
+# The Karpenter Cluster API provider, installed from the provider repo's OWN
+# Helm chart (charts/karpenter) into the WORKLOAD cluster, the way upstream
+# packages it. The chart ships the NodePool, NodeClaim and ClusterAPINodeClass
+# CRDs, so nothing else installs them.
+#
+# The chart is not published anywhere; `make karpenter-chart` copies it from
+# the provider checkout into ./charts/karpenter (gitignored) before a build,
+# so what is deployed is exactly the branch being developed.
+#
+# Two things the chart cannot provide and the Makefile supplies at runtime:
+#   - the image, built from the checkout, tagged with its commit and imported
+#     into the control plane node's containerd (`make karpenter-release`),
+#     which points components/karpenter-image at it; the nodeSelector below
+#     pins the pod to that node, since Karpenter-made workers never have the
+#     image
+#   - the Secret karpenter-mgmt-kubeconfig, a kubeconfig for the management
+#     cluster minted from a ServiceAccount there (`make wl-mgmt-credentials`)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: karpenter
+
+resources:
+  - namespace.yaml
+
+# The image tag: the build `make karpenter-release` last deployed.
+components:
+  - ../../../../../components/karpenter-image
+
+helmCharts:
+  - name: karpenter
+    releaseName: karpenter
+    namespace: karpenter
+    includeCRDs: true
+    valuesInline:
+      image:
+        repo: karpenter-clusterapi-controller
+        # Replaced by components/karpenter-image with the build's commit tag.
+        tag: dev
+        # Imported into containerd by hand; a pull would go to Docker Hub and fail.
+        pullPolicy: Never
+      arguments:
+        # The chart sets no leader-election namespace, and the binary has no
+        # default for it outside a Pod. Must match the namespace above.
+        - --leader-election-namespace=karpenter
+      logLevel: debug
+      env:
+        # Without this the provider reuses its in-cluster client for Cluster
+        # API objects and would look for MachineDeployments in this cluster.
+        clusterAPIKubeconfig: /etc/karpenter/mgmt/kubeconfig
+      volumes:
+        - name: mgmt-kubeconfig
+          secret:
+            secretName: karpenter-mgmt-kubeconfig
+      volumeMounts:
+        - name: mgmt-kubeconfig
+          mountPath: /etc/karpenter/mgmt
+          readOnly: true
+      # The cluster starts with zero workers, so the pod must be allowed on
+      # the control plane, and it must stay there for the image to be present.
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule

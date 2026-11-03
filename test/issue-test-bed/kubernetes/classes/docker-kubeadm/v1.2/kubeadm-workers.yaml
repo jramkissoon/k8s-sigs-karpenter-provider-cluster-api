@@ -1,0 +1,29 @@
+# Shared kubeadm workers bootstrap v1.2, used by the docker-kubeadm classes. v1.1 with only its test-bed labels changed: a pure template rotation.
+# No instance-type or zone node labels: Karpenter puts them on the Node from
+# its NodeClaim when it registers it.
+# Immutable once committed: a ClusterClass version references this by name,
+# so a change is a new -vN file, never an edit to this one.
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: kubeadm-workers-v1.2
+  namespace: cluster-classes
+spec:
+  template:
+    metadata:
+      # Copied onto every KubeadmConfig cloned from this template.
+      labels:
+        test-bed/bootstrap: v1.2
+      annotations:
+        test-bed/template-description: "Shared kubeadm workers bootstrap v1.2, used by the docker-kubeadm classes. v1.1 with only its test-bed labels changed: a pure template rotation."
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          # Karpenter v1 only adopts a Node that joined with this taint, and
+          # removes it once the Node is matched to its NodeClaim.
+          taints:
+            - key: karpenter.sh/unregistered
+              effect: NoExecute
+          kubeletExtraArgs:
+            # test-bed/bootstrap shows on the Node which template it joined with.
+            node-labels: karpenter.sh/capacity-type=on-demand,test-bed/bootstrap=v1.2

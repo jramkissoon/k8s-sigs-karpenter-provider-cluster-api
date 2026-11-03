@@ -1,0 +1,31 @@
+# Cluster API Operator: installs and upgrades Cluster API providers from
+# CoreProvider / BootstrapProvider / ControlPlaneProvider /
+# InfrastructureProvider objects.
+#
+# Applied SECOND, after cert-manager is Ready: the operator's own webhook
+# Certificate is in here and cert-manager must be serving to admit it.
+# Wait for the operator deployment to be Available before applying
+# ../capi-providers.
+#
+# Inflates the Helm chart, so build with:  kustomize build --enable-helm .
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: capi-operator-system
+
+resources:
+  - namespace.yaml
+
+# kustomize pulls the chart into ./charts (gitignored) on first build.
+helmCharts:
+  - name: cluster-api-operator
+    repo: https://kubernetes-sigs.github.io/cluster-api-operator
+    version: 0.29.0
+    releaseName: capi-operator
+    namespace: capi-operator-system
+    includeCRDs: true
+    # The chart would also emit the provider objects as Helm hooks. They
+    # cannot be applied in the same pass as the CRDs that define them, so
+    # they live in ../capi-providers instead and are applied once the
+    # operator is up.
+    skipHooks: true

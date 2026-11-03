@@ -1,0 +1,18 @@
+# kind config for the test-bed cluster.
+#
+# CAPD (the Docker infrastructure provider) runs inside this cluster and
+# creates workload-cluster nodes as sibling containers, so it needs the host
+# Docker socket mounted into the kind node. Nothing else is special.
+#
+# No node image is set here on purpose: the Makefile passes
+# --image kindest/node:$(K8S_VERSION) so one variable governs every version.
+# The --name flag the Makefile passes (CLUSTER_NAME) overrides the name
+# below; it is kept as the default for running kind by hand.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: capi-karpenter-test
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock

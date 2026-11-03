@@ -1,0 +1,18 @@
+# docker-kubeadm: CAPD machines bootstrapped by kubeadm, one folder per
+# version. A version is immutable once committed (Clusters reference its
+# class and templates by name): a change is a new vN folder, whose
+# kustomization.yaml says what it changes from the one before. What every
+# version shares (node images by Kubernetes version, the workers' Karpenter
+# annotations) is added to each ClusterClass here by common-patch.yaml.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - v1.0
+  - v1.1
+  - v1.2
+
+patches:
+  - path: common-patch.yaml
+    target:
+      kind: ClusterClass

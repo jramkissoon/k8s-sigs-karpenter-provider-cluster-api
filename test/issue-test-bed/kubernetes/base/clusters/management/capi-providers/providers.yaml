@@ -1,0 +1,51 @@
+# One Cluster API release for all four. The operator refuses mixed API
+# contracts, so bump them together.
+#
+# ClusterTopology is set on every provider that has the gate (core, kubeadm
+# control plane, CAPD; the kubeadm bootstrap provider has none): every
+# workload cluster is built from a ClusterClass.
+apiVersion: operator.cluster.x-k8s.io/v1alpha2
+kind: CoreProvider
+metadata:
+  name: cluster-api
+  namespace: capi-system
+spec:
+  version: v1.14.3
+  manager:
+    # ClusterClass and managed topologies (alpha, off by default in v1.14).
+    featureGates:
+      ClusterTopology: true
+---
+apiVersion: operator.cluster.x-k8s.io/v1alpha2
+kind: BootstrapProvider
+metadata:
+  name: kubeadm
+  namespace: kubeadm-bootstrap-system
+spec:
+  version: v1.14.3
+---
+apiVersion: operator.cluster.x-k8s.io/v1alpha2
+kind: ControlPlaneProvider
+metadata:
+  name: kubeadm
+  namespace: kubeadm-control-plane-system
+spec:
+  version: v1.14.3
+  manager:
+    # ClusterClass and managed topologies (alpha, off by default in v1.14).
+    featureGates:
+      ClusterTopology: true
+---
+# CAPD. Its controller mounts the host Docker socket from the node it runs
+# on, which is why the kind management cluster mounts the socket.
+apiVersion: operator.cluster.x-k8s.io/v1alpha2
+kind: InfrastructureProvider
+metadata:
+  name: docker
+  namespace: docker-infrastructure-system
+spec:
+  version: v1.14.3
+  manager:
+    # ClusterClass and managed topologies (alpha, off by default in v1.14).
+    featureGates:
+      ClusterTopology: true

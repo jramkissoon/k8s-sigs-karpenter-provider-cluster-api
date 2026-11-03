@@ -1,0 +1,6 @@
+# A deployment shaped to make Karpenter provision a node per replica.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml

@@ -1,0 +1,14 @@
+# Everything applied to the MANAGEMENT cluster: its own components
+# (management/) and the karpenter-docker workload cluster's definition
+# (karpenter-docker/). Never applied on its own: the Cluster's class and
+# version are SET-BY-REVISION placeholders that a revision component fills in,
+# so deploy ../../overlays/dev/clusters/management instead.
+#
+# What runs INSIDE the workload cluster is karpenter-docker/addons, deployed
+# through ../../overlays/dev/clusters/karpenter-docker (`make workload`).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - management
+  - karpenter-docker

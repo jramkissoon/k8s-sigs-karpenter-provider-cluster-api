@@ -1,0 +1,16 @@
+# dev: what runs INSIDE the karpenter-docker workload cluster: Calico, Karpenter
+# (from the provider's chart, built from this branch), and the NodeClass and
+# NodePool it provisions with. Applied with the workload kubeconfig once the
+# cluster is up; it does not change between revisions.
+#
+#   kustomize build --enable-helm . | kubectl --kubeconfig ../../../../../kubeconfig/karpenter-docker.kubeconfig apply --server-side --field-manager=test-bed -f -
+#
+# `make workload` does the same after creating what the chart cannot: the
+# Karpenter image on the control plane node and the Secret with its
+# management-cluster credentials. It re-applies until the chart's CRDs accept
+# the NodeClass and NodePool.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../base/clusters/karpenter-docker/addons
